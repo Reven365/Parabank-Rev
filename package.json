@@ -1,0 +1,17 @@
+{
+  "name": "parabank-rev",
+  "version": "1.0.0",
+  "description": "Parabank is a valuable demo banking application, however the data on the system is constantly reset by other users.\r Therefore for this exercise you will need to generate new accounts per test to ensure stability (not usually best practice in your applications).\r You will need to generate test data for this exercise it is recomended that you utilise @faker-js/faker from npmjs.com.",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.44.1",
+    "@types/node": "^20.14.8"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^8.4.1"
+  }
+}
