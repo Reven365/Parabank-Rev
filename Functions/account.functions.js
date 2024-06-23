@@ -21,8 +21,7 @@ export async function registerUser(page, credential){
 
 }
 
-export async function createAccount(page, type){ 
-       
+export async function getStartingAccount(page, type){
     await page.getByTestId('type').selectOption(type);
     let options = await page.getByTestId('fromAccountId').locator('option').allTextContents();
     while (options.length === 0){
@@ -30,11 +29,27 @@ export async function createAccount(page, type){
           options = await page.getByTestId('fromAccountId').locator('option').allTextContents();
     }
     
-    expect(options.length).toBeGreaterThan(0);    
-    await page.getByTestId('fromAccountId').selectOption(options[0]);
+    expect(options.length).toBeGreaterThan(0); 
+    return options[0];  
+
+}
+
+export async function createAccount(page, type){ 
+    const startingAccount = await getStartingAccount(page,type);    
+    await page.getByTestId('fromAccountId').selectOption(startingAccount);
     await page.getByRole('button', { name: 'Open New Account' }).click();   
     await expect(page.getByText('Your new account number:')).toBeVisible();
 
     return await page.getByTestId('newAccountId').textContent();
    
+}
+
+export async function transferFunds(page, amount, fromAccount, toAccount){
+    await page.goto('/parabank/transfer.htm');
+    // @ts-ignore
+      await page.getByTestId('amount').fill(amount);
+      await page.getByTestId('fromAccountId').selectOption(fromAccount);
+      await page.getByTestId('toAccountId').selectOption(toAccount);
+      await page.getByRole('button', { name: 'Transfer'}).click();
+
 }

@@ -1,8 +1,8 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 // @ts-check
-const { faker } = require('@faker-js/faker');
-const { registerUser, createAccount } = require('../Functions/account.functions');
+const { faker, tr } = require('@faker-js/faker');
+const { registerUser, createAccount, getStartingAccount, transferFunds } = require('../Functions/account.functions');
 
 test.beforeEach( async ({ page }) => {
 //Given
@@ -27,3 +27,33 @@ test('Create new account', async ({ page }) => {
       expect(accountNumber).not.toBe('');    
      
     });
+
+    test('Transfer Funds', async ({ page }) => {
+      //Given
+      //from
+      //to      
+        await page.goto('/parabank/openaccount.htm');
+        const fromAccount = await getStartingAccount(page,'CHECKING');
+        const toAccount = await createAccount(page,'CHECKING');
+      //When
+      await page.goto('/parabank/overview.htm');
+      const amountAvailable = await page.getByRole('row', {name: fromAccount }).getByRole('cell', {name: '$'}).nth(1).textContent(); 
+      //value has $
+      //we need half the amoutAvailable
+      // @ts-ignore
+      let halfAvailable = ((amountAvailable?.split('$')[1]) / 2).toString();  
+      
+
+      await transferFunds(page, halfAvailable, fromAccount, toAccount);
+      
+      
+      //Then
+      if(!halfAvailable.includes(`.`)){
+        halfAvailable += ".00";
+      }
+      await expect(page.getByText(`$${halfAvailable} has been transferred from account #${fromAccount} to account #${toAccount}`)).toBeVisible();
+       
+      });
+
+
+  
